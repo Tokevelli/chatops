@@ -19,7 +19,7 @@ from flask_sqlalchemy import SQLAlchemy
 basedir = Path(__file__).resolve().parent
 
 # configuration
-DATABASE = "flaskr.db"
+DATABASE = "shareSpace.db"
 USERNAME = "admin"
 PASSWORD = "admin"
 SECRET_KEY = "change_me"

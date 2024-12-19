@@ -77,16 +77,29 @@ def login():
     """User login/authentication/session management."""
     error = None
     if request.method == "POST":
-        if request.form["username"] != app.config["USERNAME"]:
-            error = "Invalid username"
-        elif request.form["password"] != app.config["PASSWORD"]:
-            error = "Invalid password"
+        user = db.session.query(models.User).filter_by(name=request.form["username"]).first()
+        if  not user or user.password != request.form["password"]:
+            error = "Invalid username or password"
         else:
             session["logged_in"] = True
             flash("You were logged in")
             return redirect(url_for("index"))
     return render_template("login.html", error=error)
 
+@app.route("/newuser", methods=["GET", "POST"])
+def new_user():
+    if request.method == "POST" and request.form.get("password") and request.form.get("username"):
+        newuser = models.User(request.form["username"], request.form["password"])
+        try:
+            db.session.add(newuser)
+            db.session.commit()
+            session["logged_in"] = True
+            flash("New User Created")
+            return redirect(url_for("index"))
+        except Exception as e:
+            return render_template("newuser.html", error="Error when adding user: " + str(e))
+    else:
+        return render_template("newuser.html")
 
 @app.route("/logout")
 def logout():

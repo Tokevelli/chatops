@@ -28,7 +28,8 @@
     <div class="flash alert alert-success col-sm-4" role="success">
       {{ message }}
     </div>
-    {% endfor %} {% if session.logged_in %}
+    {% endfor %} 
+    {% if session.logged_in %}
     <form action="{{ url_for('add_entry') }}" method="post" class="add-entry form-group">
       <dl>
         <dt>Title:</dt>
@@ -52,15 +53,20 @@
     <ul class="entries">
       {% for entry in entries %}
       <li class="entry">
-        <h2 id="{{ entry.id }}">{{ entry.title }}</h2>
+        <h2 id="post_{{ entry.id }}">{{ entry.title }}</h2>
         {{ entry.text|safe }}
+        <div>
+          <!-- Updated Like button with data-post-id attribute -->
+          <button class="btn btn-outline-primary like-button" data-post-id="{{ entry.id }}">Like</button>
+          <span id="like_count_{{ entry.id }}">{{ entry.likes_count }} Likes</span>
+        </div>
       </li>
       {% else %}
       <li><em>No entries yet. Add some!</em></li>
       {% endfor %}
     </ul>
   </div>
-  <script type="text/javascript" src="{{url_for('static', filename='main.js') }}"></script>
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
 
 </html>

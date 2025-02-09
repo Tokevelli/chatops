@@ -16,6 +16,7 @@ from flask import (
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 
+
 basedir = Path(__file__).resolve().parent
 
 # configuration
@@ -57,6 +58,8 @@ def login_required(f):
 def index():
     """Searches the database for entries, then displays them."""
     entries = db.session.query(models.Post)
+    print(f"Session data: {session}")  # Debugging session contents
+    print(session.get('username') + 'is logged in')
     return render_template("index.html", entries=entries)
 
 
@@ -74,17 +77,19 @@ def add_entry():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """User login/authentication/session management."""
     error = None
     if request.method == "POST":
         user = db.session.query(models.User).filter_by(name=request.form["username"]).first()
-        if  not user or user.password != request.form["password"]:
-            error = "Invalid username or password"
-        else:
+        if user and user.password == request.form["password"]:
             session["logged_in"] = True
-            flash("You were logged in")
+            session["user_id"] = user.id
+            print("Session set for:", session["user_id"])  # Debugging line
             return redirect(url_for("index"))
+        else:
+            error = "Invalid username or password"
     return render_template("login.html", error=error)
+
+
 
 @app.route("/newuser", methods=["GET", "POST"])
 def new_user():
@@ -132,6 +137,37 @@ def search():
     if query:
         return render_template("search.html", entries=entries, query=query)
     return render_template("search.html")
+
+@app.route("/like_post/<int:post_id>", methods=["POST"])
+@login_required
+def like_post(post_id):
+    user_id = session.get("user_id")  # Retrieve user_id from session
+    if user_id is None:
+        return jsonify({'status': 'error', 'message': 'User not logged in'}), 403
+
+    like = db.session.query(models.Like).filter_by(post_id=post_id, user_id=user_id).first()
+    if not like:
+        new_like = models.Like(post_id=post_id, user_id=user_id)
+        db.session.add(new_like)
+        try:
+            db.session.commit()
+            likes_count = db.session.query(models.Like).filter_by(post_id=post_id).count()
+            return jsonify({'status': 'liked', 'likes_count': likes_count})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'status': 'error', 'message': str(e)}), 500
+    else:
+        db.session.delete(like)
+        db.session.commit()
+        likes_count = db.session.query(models.Like).filter_by(post_id=post_id).count()
+        return jsonify({'status': 'unliked', 'likes_count': likes_count})
+
+@app.route("/check_session")
+def check_session():
+    if "user_id" in session:
+        return f"User ID in session: {session['user_id']}"
+    return "No user ID in session"
+
 
 
 if __name__ == "__main__":

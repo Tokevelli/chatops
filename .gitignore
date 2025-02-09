@@ -1,5 +1,25 @@
-env
-*.pyc
-*.DS_Store
-__pycache__
-*.db
+#Bash
+.bash_history
+.bash_logout
+
+#Cache directories
+.cache
+
+#Development tools
+.dotnet
+.vscode-server
+
+#Git configuration
+.gitconfig
+
+#SSH and security
+.ssh/
+
+#System files
+.lesshst
+.local
+.sudo_as_admin_successful
+.wget-hsts
+
+#Other
+snap/

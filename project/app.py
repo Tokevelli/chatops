@@ -58,8 +58,9 @@ def index():
     """Searches the database for entries, then displays them."""
     entries = db.session.query(models.Post)
     print(f"Session data: {session}")  # Debugging session contents
-    print(session.get('username') + 'is logged in')
+    print(f"{session.get('username') or 'No user'} is logged in")
     return render_template("index.html", entries=entries)
+
 
 
 @app.route("/add", methods=["POST"])
@@ -82,11 +83,13 @@ def login():
         if user and user.password == request.form["password"]:
             session["logged_in"] = True
             session["user_id"] = user.id
-            print("Session set for:", session["user_id"])  # Debugging line
+            session["username"] = user.name  # Set username in session
+            print("Session set for user:", session["username"])  # Debugging line
             return redirect(url_for("index"))
         else:
             error = "Invalid username or password"
     return render_template("login.html", error=error)
+
 
 
 

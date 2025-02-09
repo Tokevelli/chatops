@@ -1,3 +1,4 @@
+import bcrypt
 from project.app import db
 
 
@@ -20,7 +21,13 @@ class User(db.Model):
 
     def __init__(self, name, password):
         self.name = name
-        self.password = password
+        self.password = self.hash_password(password)
+
+    def hash_password(self, password):
+        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    def check_password(self, password):
+        return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
 
     def __str__(self):
         return f"Username: {self.name}"

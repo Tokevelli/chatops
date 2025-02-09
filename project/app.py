@@ -14,7 +14,7 @@ from flask import (
     jsonify,
 )
 from flask_sqlalchemy import SQLAlchemy
-
+import bcrypt
 
 basedir = Path(__file__).resolve().parent
 

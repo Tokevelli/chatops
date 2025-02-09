@@ -57,6 +57,8 @@ def login_required(f):
 def index():
     """Searches the database for entries, then displays them."""
     entries = db.session.query(models.Post)
+    print(f"Session data: {session}")  # Debugging session contents
+    print(session.get('username') + 'is logged in')
     return render_template("index.html", entries=entries)
 
 

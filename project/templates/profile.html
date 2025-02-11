@@ -1,0 +1,10 @@
+<!-- profile.html -->
+<h1>Your Profile</h1>
+<h2>Welcome, {{ user.id }}!</h2>  <!-- Display the username or any other user attribute -->
+<h2>Your Posts</h2>
+<ul>
+    {% for post in posts %}
+        <li><strong>{{ post.title }}</strong>: {{ post.text }}</li>
+    {% endfor %}
+</ul>
+<a href="{{ url_for('logout') }}">Logout</a>

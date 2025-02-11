@@ -81,7 +81,7 @@ def login():
     error = None
     if request.method == "POST":
         user = db.session.query(models.User).filter_by(name=request.form["username"]).first()
-        if user and user.password == request.form["password"]:
+        if user and user.check_password(request.form["password"]):
             session["logged_in"] = True
             session["user_id"] = user.id
             session["username"] = user.name  # Set username in session

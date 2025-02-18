@@ -69,7 +69,7 @@ def add_entry():
     """Adds new post to the database."""
     if not session.get("logged_in"):
         abort(401)
-    new_entry = models.Post(request.form["title"], request.form["text"])
+    new_entry = models.Post(request.form["title"], request.form["text"], session.get("user_id")) # Modified DSO 2.9.25
     db.session.add(new_entry)
     db.session.commit()
     flash("New entry was successfully posted")
@@ -83,7 +83,7 @@ def login():
         user = db.session.query(models.User).filter_by(name=request.form["username"]).first()
         if user and user.check_password(request.form["password"]):
             session["logged_in"] = True
-            session["user_id"] = user.id
+            session["user_id"] = user.id # Stores user_id in session
             session["username"] = user.name  # Set username in session
             print("Session set for user:", session["username"])  # Debugging line
             return redirect(url_for("index"))
@@ -102,6 +102,7 @@ def new_user():
             db.session.add(newuser)
             db.session.commit()
             session["logged_in"] = True
+            session["user_id"] = newuser.id  # Store user_id in session
             flash("New User Created")
             return redirect(url_for("index"))
         except Exception as e:
@@ -113,6 +114,7 @@ def new_user():
 def logout():
     """User logout/authentication/session management."""
     session.pop("logged_in", None)
+    session.pop("user_id", None)  # Remove user_id from session DSO
     flash("You were logged out")
     return redirect(url_for("index"))
 
@@ -171,6 +173,14 @@ def check_session():
         return f"User ID in session: {session['user_id']}"
     return "No user ID in session"
 
+@app.route("/profile") #Not sure if I should add this block or edit it into another.
+@login_required
+def profile():
+    """Displays the profile page with user's posts."""
+    user_id = session.get("user_id") 
+    user = db.session.query(models.User).get(user_id)
+    user_posts = db.session.query(models.Post).filter_by(user_id=user_id).all()
+    return render_template("profile.html", posts=user_posts, user = user) # end of added block
 
 
 if __name__ == "__main__":

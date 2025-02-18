@@ -1,22 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ user.name }}'s Profile</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <h1>{{ user.name }}'s Profile</h1>
-    <ul>
-        {% for post in posts %}
-        <li>
-            <h2>{{ post.title }}</h2>
-            <p>{{ post.body }}</p>
-        </li>
-        {% else %}
-        <li>No posts yet.</li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('index') }}">Back to Home</a>
-</body>
-</html>
-
+<!-- profile.html -->
+<h1>Your Profile</h1>
+<h2>Welcome, {{ user.id }}!</h2>  <!-- Display the username or any other user attribute -->
+<h2>Your Posts</h2>
+<ul>
+    {% for post in posts %}
+        <li><strong>{{ post.title }}</strong>: {{ post.text }}</li>
+    {% endfor %}
+</ul>
+<a href="{{ url_for('logout') }}">Logout</a>

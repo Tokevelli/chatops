@@ -6,10 +6,13 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String, nullable=False)
     text = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Foreign key to User DSO
+    user = db.relationship('User', backref='posts')  # Relationship back to User DSO
 
-    def __init__(self, title, text):
+    def __init__(self, title, text, user_id):
         self.title = title
         self.text = text
+        self.user_id = user_id # added 2.6.25 DSO
 
     def __repr__(self):
         return f"<title {self.title}>"

@@ -1,6 +1,14 @@
 <!-- profile.html -->
 <h1>Your Profile</h1>
-<h2>Welcome, {{ user.id }}!</h2>  <!-- Display the username or any other user attribute -->
+<!--<h2>Welcome, {{ user.id }}!</h2>   Display the username or any other user attribute -->
+
+<h2>{% if session.get('logged_in') %}
+        Welcome, {{ session.get('username') }}
+        {% else %}
+        Not logged in
+      {% endif %}
+    </h2> 
+
 <h2>Your Posts</h2>
 <ul>
     {% for post in posts %}

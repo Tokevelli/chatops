@@ -15,5 +15,4 @@ COPY . .
 EXPOSE 5000  
 
 # Set the command to run the application
-#CMD ["python3 -m flask -A /app.py run --host=0.0.0.0"]
 CMD ["python3", "-m", "flask", "--app", "project/app.py", "run", "--host=0.0.0.0"]

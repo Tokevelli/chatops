@@ -1,48 +1,28 @@
 import os
 from functools import wraps
 from pathlib import Path
-
-from flask import (
-    Flask,
-    render_template,
-    request,
-    session,
-    flash,
-    redirect,
-    url_for,
-    abort,
-    jsonify,
-)
+from flask import Flask, render_template, request, session, flash, redirect, url_for, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 
-
-basedir = Path(__file__).resolve().parent
-
-# configuration
-DATABASE = "shareSpace.db"
-USERNAME = "admin"
-PASSWORD = "admin"
-SECRET_KEY = "change_me"
-url = os.getenv("DATABASE_URL", f"sqlite:///{Path(basedir).joinpath(DATABASE)}")
-
-if url.startswith("postgres://"):
-    url = url.replace("postgres://", "postgresql://", 1)
-
-SQLALCHEMY_DATABASE_URI = url
-SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-
 # create and initialize a new Flask app
 app = Flask(__name__)
-# load the config
-app.config.from_object(__name__)
+
+# Base directory
+basedir = Path(__file__).resolve().parent
+
+# Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', f"sqlite:///{basedir.joinpath('shareSpace.db')}")
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 # init sqlalchemy
 db = SQLAlchemy(app)
 
+# Ensure models are loaded after Flask and db initialization
 from project import models
 
-
+# Decorator for requiring login
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -50,10 +30,9 @@ def login_required(f):
             flash("Please log in.")
             return jsonify({"status": 0, "message": "Please log in."}), 401
         return f(*args, **kwargs)
-
     return decorated_function
 
-
+# Route definitions
 @app.route("/")
 def index():
     """Searches the database for entries, then displays them."""
@@ -61,8 +40,6 @@ def index():
     print(f"Session data: {session}")  # Debugging session contents
     print(f"{session.get('username') or 'No user'} is logged in")
     return render_template("index.html", entries=entries)
-
-
 
 @app.route("/add", methods=["POST"])
 def add_entry():
@@ -74,7 +51,6 @@ def add_entry():
     db.session.commit()
     flash("New entry was successfully posted")
     return redirect(url_for("index"))
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -90,9 +66,6 @@ def login():
         else:
             error = "Invalid username or password"
     return render_template("login.html", error=error)
-
-
-
 
 @app.route("/newuser", methods=["GET", "POST"])
 def new_user():
@@ -118,7 +91,6 @@ def logout():
     flash("You were logged out")
     return redirect(url_for("index"))
 
-
 @app.route("/delete/<int:post_id>", methods=["GET"])
 @login_required
 def delete_entry(post_id):
@@ -133,7 +105,6 @@ def delete_entry(post_id):
     except Exception as e:
         result = {"status": 0, "message": repr(e)}
     return jsonify(result)
-
 
 @app.route("/search/", methods=["GET"])
 def search():
@@ -173,15 +144,15 @@ def check_session():
         return f"User ID in session: {session['user_id']}"
     return "No user ID in session"
 
-@app.route("/profile") #Not sure if I should add this block or edit it into another.
+@app.route("/profile")  # Profile page route
 @login_required
 def profile():
     """Displays the profile page with user's posts."""
     user_id = session.get("user_id") 
     user = db.session.query(models.User).get(user_id)
     user_posts = db.session.query(models.Post).filter_by(user_id=user_id).all()
-    return render_template("profile.html", posts=user_posts, user = user) # end of added block
-
+    return render_template("profile.html", posts=user_posts, user=user)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0')
+

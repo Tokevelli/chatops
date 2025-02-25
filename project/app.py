@@ -79,7 +79,7 @@ def new_user():
             flash("New User Created")
             return redirect(url_for("index"))
         except Exception as e:
-            return render_template("newuser.html", error="Error when adding user: " + str(e))
+            return render_template("newuser.html", error="Error when adding user")
     else:
         return render_template("newuser.html")
 

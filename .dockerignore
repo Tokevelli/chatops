@@ -1,0 +1,31 @@
+#Bash
+.bash_history
+.bash_logout
+
+#Cache directories
+.cache
+__pycache__/
+*.pyc
+
+#Development tools
+.dotnet
+.vscode-server
+
+#Git configuration
+.gitconfig
+
+#SSH and security
+.ssh/
+
+#System files
+.lesshst
+.local
+.sudo_as_admin_successful
+.wget-hsts
+
+#Other
+snap/
+*.db
+project/__pycache__/__init__.cpython-312.pyc
+project/__pycache__/app.cpython-312.pyc
+project/__pycache__/models.cpython-312.pyc

@@ -15,27 +15,18 @@ stages:
 
 build:
   stage: build
-  tags:
-    - docker
-    - deploy
   script:
     - docker build --pull -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
 test:
   stage: test
-  tags:
-    - docker
-    - deploy
   script:
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
     - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG echo "Running dummy tests"
 
 release:
   stage: release
-  tags:
-    - docker
-    - deploy
   script:
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG $CI_REGISTRY_IMAGE:release
@@ -45,9 +36,6 @@ release:
 
 deploy:
   stage: deploy
-  tags:
-    - docker
-    - deploy
   image: jenkins/ssh-slave
   before_script:
     - echo -n $SSH_PRIVATE_KEY | base64 -d > SSH_KEY_FILE

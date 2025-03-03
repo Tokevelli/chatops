@@ -13,7 +13,7 @@ basedir = Path(__file__).resolve().parent
 
 # Determine the database path
 if os.getenv('FLASK_ENV') == 'production':
-    db_path = "/home/production/chatops/project/shareSpace.db"  # Use absolute path on production
+    db_path = "/home/production/chatops/project/dbdir/shareSpace.db"  # Use absolute path on production
 else:
     db_path = basedir.joinpath("shareSpace.db")  # Local development path
 

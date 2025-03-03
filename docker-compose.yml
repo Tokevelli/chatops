@@ -1,9 +1,11 @@
 version: '3.8'
 services:
   web:
-    image: josephumt/chatops:$CI_COMMIT_REF_SLUG  # Use the image from Docker Hub
+    image: josephumt/chatops:$CI_COMMIT_REF_SLUG  # Use the image from Docker>
     ports:
       - "80:5000"  # Map port 80 on the host to port 5000 in the container
     environment:
       - FLASK_ENV=production
+    volumes:
+      - /home/production/chatops/project/shareSpace.db:/app/shareSpace.db  # Mount the existing DB
     restart: always  # Ensure the container restarts automatically if it stops

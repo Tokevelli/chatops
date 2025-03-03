@@ -11,8 +11,14 @@ app = Flask(__name__)
 # Base directory
 basedir = Path(__file__).resolve().parent
 
+# Determine the database path
+if os.getenv('FLASK_ENV') == 'production':
+    db_path = "/home/production/chatops/project/shareSpace.db"  # Use absolute path on production
+else:
+    db_path = basedir.joinpath("shareSpace.db")  # Local development path
+
 # Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', f"sqlite:///{basedir.joinpath('shareSpace.db')}")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', f"sqlite:///{db_path}")
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

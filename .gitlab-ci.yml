@@ -38,12 +38,18 @@ deploy:
   stage: deploy
   image: jenkins/ssh-slave
   before_script:
-    - echo -n $SSH_PRIVATE_KEY | base64 -d > SSH_KEY_FILE
+    - echo -n "$SSH_PRIVATE_KEY" | base64 -d > SSH_KEY_FILE
     - chmod 400 SSH_KEY_FILE
   script:
-    - env
-    - ssh -i SSH_KEY_FILE -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER "cd $DEPLOY_PATH; docker-compose pull && docker-compose up -d"
+    - env  # Print environment variables for debugging
+    - export CI_COMMIT_REF_SLUG=${CI_COMMIT_REF_SLUG:-"latest"}  # Ensure it's set
+    - echo "Using CI_COMMIT_REF_SLUG: $CI_COMMIT_REF_SLUG"  # Debugging output
+    - ssh -i SSH_KEY_FILE -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER "
+        cd $DEPLOY_PATH && 
+        docker-compose -f docker-compose.yml pull &&
+        docker-compose -f docker-compose.yml up -d"
   environment: 
     name: production
   only:
     - main
+

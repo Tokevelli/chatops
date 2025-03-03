@@ -47,6 +47,7 @@ deploy:
     - ssh -i SSH_KEY_FILE -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER "
         export CI_COMMIT_REF_SLUG=$CI_COMMIT_REF_SLUG &&
         cd $DEPLOY_PATH &&
+        docker-compose -f docker-compose.yml down &&  # Stop and remove old containers
         docker-compose -f docker-compose.yml pull &&
         docker-compose -f docker-compose.yml up -d"
   environment: 

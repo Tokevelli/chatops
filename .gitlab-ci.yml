@@ -43,7 +43,7 @@ deploy:
   script:
     - env  # Print environment variables for debugging
     - export CI_COMMIT_REF_SLUG=${CI_COMMIT_REF_SLUG:-"latest"}  # Ensure it's set
-    - echo "Using CI_COMMIT_REF_SLUG: $CI_COMMIT_REF_SLUG"  # Debugging output
+    - echo "Using CI_COMMIT_REF_SLUG:$CI_COMMIT_REF_SLUG"  # Debugging output
     - ssh -i SSH_KEY_FILE -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER "
         cd $DEPLOY_PATH && 
         docker-compose -f docker-compose.yml pull &&

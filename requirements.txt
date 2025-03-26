@@ -7,3 +7,5 @@ flake8==6.1.0
 pytest==7.4.2
 
 bcrypt==4.2.1
+
+pymysql

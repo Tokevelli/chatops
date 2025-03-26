@@ -5,28 +5,29 @@ from flask import Flask, render_template, request, session, flash, redirect, url
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 
-# create and initialize a new Flask app
+# Create and initialize a new Flask app
 app = Flask(__name__)
 
-# Base directory
-basedir = Path(__file__).resolve().parent
+# Use MariaDB for both local and production environments
+db_user = os.getenv('SQL_USERNAME', 'myuser')
+db_password = os.getenv('SQL_PASSWORD', 'mypassword')
+db_host = os.getenv('SQL_HOST', 'db')  # Default to 'db' service in docker-compose
+db_port = os.getenv('SQL_PORT', '3306')
+db_name = os.getenv('SQL_DATABASE', 'shareSpace')
 
-# Determine the database path
-if os.getenv('FLASK_ENV') == 'production':
-    db_path = "/app/dbdir/shareSpace.db"  # Corrected path inside the container
-else:
-    db_path = basedir.joinpath("shareSpace.db")  # Local development path
+# Set the database URI for MariaDB
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
-# Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL') or f"sqlite:///{db_path}"
+# General Configurations
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# init sqlalchemy
+# Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
 # Ensure models are loaded after Flask and db initialization
 from project import models
+
 
 # Decorator for requiring login
 def login_required(f):

@@ -1,12 +1,32 @@
 version: '3.8'
+
 services:
   web:
-    image: josephumt/chatops:$CI_COMMIT_REF_SLUG  # Use the image from Docker>
+    image: josephumt/chatops:dbtest  # Pull app from Docker Hub
+    depends_on:
+      - db
     ports:
-      - "80:5000"  # Map port 80 on the host to port 5000 in the container
+      - "8000:5000"
     environment:
       - FLASK_ENV=production
-      - DATABASE_URL=sqlite:////app/dbdir/shareSpace.db
+      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://${SQL_USERNAME}:${SQL_PASSWORD}@db:3306/${SQL_DATABASE}
+      - SQL_USERNAME=myuser
+      - SQL_PASSWORD=mypassword
+      - SQL_DATABASE=shareSpace
+    restart: always
+
+  db:
+    image: lscr.io/linuxserver/mariadb:latest  # Pull MariaDB from Docker Hub
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=shareSpace
+      - MYSQL_USER=myuser
+      - MYSQL_PASSWORD=mypassword
     volumes:
-      - /home/production/chatops/project/dbdir:/app/dbdir  # Mount the existing DB
-    restart: always  # Ensure the container restarts automatically if it stops
+      - db_data:/config  # Ensure database persistence
+    ports:
+      - "3306:3306"
+
+volumes:
+  db_data:

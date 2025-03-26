@@ -2,17 +2,17 @@ version: '3.8'
 
 services:
   web:
-    image: josephumt/chatops:dbtest  # Pull app from Docker Hub
+    image: josephumt/chatops:$CI_COMMIT_REF_SLUG  # Pull app from Docker Hub
     depends_on:
       - db
     ports:
-      - "8000:5000"
+      - "80:5000"
     environment:
       - FLASK_ENV=production
-      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://${SQL_USERNAME}:${SQL_PASSWORD}@db:3306/${SQL_DATABASE}
+      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://myuser:mypassword@db:3306/shareSpace
       - SQL_USERNAME=myuser
       - SQL_PASSWORD=mypassword
-      - SQL_DATABASE=shareSpace
+      - SQL_DATABASE=chatops
     restart: always
 
   db:
@@ -20,7 +20,7 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
-      - MYSQL_DATABASE=shareSpace
+      - MYSQL_DATABASE=chatops
       - MYSQL_USER=myuser
       - MYSQL_PASSWORD=mypassword
     volumes:

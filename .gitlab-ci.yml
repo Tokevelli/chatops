@@ -24,7 +24,7 @@ test:
   stage: test
   script:
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-    - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG echo "Running dummy tests"
+    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG pytest tests/
 
 release:
   stage: release

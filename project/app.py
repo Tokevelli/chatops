@@ -35,8 +35,6 @@ def create_app(test_config=None):
         from project import models
         db.create_all()
 
-    return app
-
     # ====================
     # Routes and helpers
     # ====================

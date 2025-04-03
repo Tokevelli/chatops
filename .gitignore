@@ -26,6 +26,7 @@ __pycache__/
 #Other
 snap/
 *.db
-project/__pycache__/__init__.cpython-312.pyc
-project/__pycache__/app.cpython-312.pyc
-project/__pycache__/models.cpython-312.pyc
+
+project/__pycache__/*
+project/.pytest_cache/
+project/.mypy_cache/

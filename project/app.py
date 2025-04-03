@@ -1,4 +1,5 @@
 import os
+import logging
 from functools import wraps
 from pathlib import Path
 from flask import Flask, render_template, request, session, flash, redirect, url_for, abort, jsonify
@@ -7,6 +8,12 @@ import bcrypt
 
 def create_app(test_config=None):
     app = Flask(__name__)
+
+    # Configure logging
+    if not app.debug:
+        # Ensures logs are only set up for non-debug mode
+        logging.basicConfig(filename='/var/log/app/app.log', level=logging.INFO,
+                            format='%(asctime)s:%(levelname)s:%(message)s')
 
     # Use test config if passed
     if test_config:
@@ -27,6 +34,8 @@ def create_app(test_config=None):
     with app.app_context():
         from project import models
         db.create_all()
+
+    return app
 
     # ====================
     # Routes and helpers

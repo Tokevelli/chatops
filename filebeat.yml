@@ -1,0 +1,13 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/app/*.log  # Ensure this path matches where logs are stored
+
+output.logstash:  # Sending output to Logstash
+  hosts: ["10.8.157.184:5044"]  # Logstash server IP and port
+
+processors:
+  - add_host_metadata: {}
+  - add_cloud_metadata: {}
+  - add_docker_metadata: {}

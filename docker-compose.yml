@@ -25,6 +25,7 @@ services:
       - MYSQL_DATABASE=chatops
       - MYSQL_USER=myuser
       - MYSQL_PASSWORD=mypassword
+    restart: always
     volumes:
       - db_data:/config
     ports:
@@ -33,6 +34,7 @@ services:
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.10.2
     user: root  # Ensure it has permissions to read log files
+    restart: always
     volumes:
       - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
       - web_logs:/var/log/app:ro  # Same volume as the app for log access

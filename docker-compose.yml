@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    image: josephumt/chatops:$CI_COMMIT_REF_SLUG  # Pull app from Docker Hub
+    image: josephumt/chatops:$CI_COMMIT_REF_SLUG
     depends_on:
       - db
     ports:
@@ -14,9 +14,11 @@ services:
       - SQL_PASSWORD=mypassword
       - SQL_DATABASE=chatops
     restart: always
+    volumes:
+      - web_logs:/var/log/app  # Assuming app logs here
 
   db:
-    image: lscr.io/linuxserver/mariadb:latest  # Pull MariaDB from Docker Hub
+    image: lscr.io/linuxserver/mariadb:latest
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
@@ -24,9 +26,19 @@ services:
       - MYSQL_USER=myuser
       - MYSQL_PASSWORD=mypassword
     volumes:
-      - db_data:/config  # Ensure database persistence
+      - db_data:/config
     ports:
       - "3306:3306"
 
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.10.2
+    user: root  # Ensure it has permissions to read log files
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - web_logs:/var/log/app:ro  # Same volume as the app for log access
+    depends_on:
+      - web
+
 volumes:
   db_data:
+  web_logs:  # Define this to store logs if not already present

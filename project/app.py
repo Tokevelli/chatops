@@ -5,6 +5,7 @@ from pathlib import Path
 from flask import Flask, render_template, request, session, flash, redirect, url_for, abort, jsonify
 from project import db
 import bcrypt
+from prometheus_flask_exporter import PrometheusMetrics
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -28,6 +29,8 @@ def create_app(test_config=None):
         app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
         app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    metrics = PrometheusMetrics(app)
 
     db.init_app(app)
 

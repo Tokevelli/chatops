@@ -9,3 +9,5 @@ pytest==7.4.2
 bcrypt==4.2.1
 
 pymysql
+
+prometheus_flask_exporter

@@ -19,23 +19,23 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: db-secret
-              key: password
+              name: flask-secrets
+              key: SQL_PASSWORD
         - name: MYSQL_DATABASE
           valueFrom:
             configMapKeyRef:
               name: flask-config
-              key: DB_NAME
+              key: SQL_DATABASE
         - name: MYSQL_USER
           valueFrom:
             configMapKeyRef:
               name: flask-config
-              key: DB_USER
+              key: SQL_USERNAME
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: db-secret
-              key: password
+              name: flask-secrets
+              key: SQL_PASSWORD
         ports:
         - containerPort: 3306
         volumeMounts:

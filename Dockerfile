@@ -11,6 +11,10 @@ RUN pip install -r requirements.txt
 # Copy the rest of the application code
 COPY . .  
 
+#adds log directory
+
+RUN mkdir -p /var/log/app
+
 # Expose the port your app runs on
 EXPOSE 5000  
 
